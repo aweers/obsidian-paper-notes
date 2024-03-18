@@ -68,6 +68,9 @@ export default class PaperNotesPlugin extends Plugin {
 		let title = abs?.querySelector('.title')?.textContent || 'No title';
 		let authors = abs?.querySelector('.authors')?.textContent;
 		let abstract = abs?.querySelector('.abstract')?.textContent;
+		let submitted_from = abs?.querySelector('.submission-history')?.textContent || '';
+		let submitted_on = abs?.querySelector('.dateline')?.textContent || '';
+		let latest_revision = abs?.querySelector('.dateline')?.textContent || '';
 
 		if (title) {
 			title = title.replace('Title:', '');
@@ -94,6 +97,44 @@ export default class PaperNotesPlugin extends Plugin {
 			authors = authors_list.join(', ');
 		}
 
+		// Convert submission history to the name of the person submitting
+		if (submitted_from) {
+			let submitted_from_results = submitted_from.match(/From:\s(.*?)\s\[/);
+			submitted_from = submitted_from_results[1];
+		}
+
+		// Convert the arXiv date formate into something Obsidian notes understands
+		function convertDateFormat(dateStr: string): string {
+			// Define a mapping from month abbreviations to their numerical representation
+			const monthMap: { [key: string]: string } = {
+				Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+				Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+			};
+			
+			// Split the input string into its components
+			const parts = dateStr.split(' ');
+			
+			// Extract the day, month, and year
+			const day = parts[0].padStart(2, '0'); // Ensure the day is two digits
+			const month = monthMap[parts[1]]; // Convert month abbreviation to number
+			const year = parts[2];
+			
+			// Construct and return the new date format
+			return `${year}-${month}-${day}`;
+		}
+		
+		// Convert submitted on date for the first version
+		if (submitted_on) {
+			let submitted_on_results = submitted_on.match(/Submitted on (.*?) \(v1\)/);
+			submitted_on = convertDateFormat(submitted_on_results[1]);
+		}
+
+		// Convert latest revision date
+		if (latest_revision) {
+			let latest_revision_results = latest_revision.match(/last revised (.*?) \(/);
+			latest_revision = convertDateFormat(latest_revision_results[1]);
+		}
+		
 		// Add paper details
 		let note = this.settings.template;
 		
@@ -101,6 +142,9 @@ export default class PaperNotesPlugin extends Plugin {
 		if (title) note = note.replace('{{title}}', title);
 		if (authors) note = note.replace('{{authors}}', authors);
 		if (abstract) note = note.replace('{{abstract}}', abstract);
+		if (submitted_on) note = note.replace('{{submitted_on}}', submitted_on);
+		if (submitted_from) note = note.replace('{{submitted_from}}', submitted_from);
+		if (latest_revision) note = note.replace('{{latest_revision}}', latest_revision);
 
 		note = note.replace('{{pdf_file}}', this.settings.folder + '/' + this.settings.pdf_folder + '/' + paper_id + '.pdf');
 
