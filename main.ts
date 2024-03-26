@@ -74,7 +74,7 @@ export default class PaperNotesPlugin extends Plugin {
 		}
 
 		if (abstract) {
-			abstract = abstract.replace('Abstract: ', '');
+			abstract = abstract.replace('Abstract:', '');
 			abstract = abstract.replace(/\n/g, ' ');
 			abstract = abstract.replace('  ', ' ');
 			abstract = abstract.replace(/\t/g, '');
