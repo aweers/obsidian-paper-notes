@@ -98,7 +98,7 @@ export default class PaperNotesPlugin extends Plugin {
 		let note = this.settings.template;
 		
 		// Insert data into template
-		if (title) note = note.replace('{{title}}', title);
+		if (title) note = note.replace('{{arxiv_title}}', title);
 		if (authors) note = note.replace('{{authors}}', authors);
 		if (abstract) note = note.replace('{{abstract}}', abstract);
 
