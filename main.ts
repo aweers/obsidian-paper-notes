@@ -68,6 +68,8 @@ export default class PaperNotesPlugin extends Plugin {
 		let title = abs?.querySelector('.title')?.textContent || 'No title';
 		let authors = abs?.querySelector('.authors')?.textContent;
 		let abstract = abs?.querySelector('.abstract')?.textContent;
+		let primary_subject = abs?.querySelector('.primary-subject')?.textContent || '';
+		let doi = abs?.querySelector('.tablecell.arxivdoi a')?.textContent || '';
 
 		if (title) {
 			title = title.replace('Title:', '');
@@ -101,6 +103,11 @@ export default class PaperNotesPlugin extends Plugin {
 		if (title) note = note.replace('{{arxiv_title}}', title);
 		if (authors) note = note.replace('{{authors}}', authors);
 		if (abstract) note = note.replace('{{abstract}}', abstract);
+		if (url) note = note.replace('{{url}}', url);
+		if (pdf_url) note = note.replace('{{pdf_url}}', pdf_url);
+		if (paper_id) note = note.replace('{{arxiv_id}}', paper_id);
+		if (doi) note = note.replace('{{doi}}', doi);
+		if (primary_subject) note = note.replace('{{primary_subject}}', primary-subject);
 
 		note = note.replace('{{pdf_file}}', this.settings.folder + '/' + this.settings.pdf_folder + '/' + paper_id + '.pdf');
 
